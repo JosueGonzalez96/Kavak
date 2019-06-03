@@ -26,15 +26,10 @@ class ServiceCall: NSObject {
                 completion(false, nil)
             } else {
                 let dataString = String(data: data!, encoding: String.Encoding.utf8)
-//                print(dataString!)
-                let datas = dataString?.data(using: .utf8)
-                let json: NSDictionary = try! JSONSerialization.jsonObject(with: datas!) as! NSDictionary
                 self.response.parseGetGnomes(stringResponse: dataString!, completion: completion)
-                
                 
             }
         })
-        
         dataTask.resume()
     }
 }

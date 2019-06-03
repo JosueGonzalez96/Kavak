@@ -17,8 +17,7 @@ class ProfessionsCell: UITableViewCell {
     @IBOutlet weak var viewContainer: UIView!
     var gnome = Gnome()
     var isProfessions = true
-    override func awakeFromNib() {
-    }
+    
     func setUI() {
         viewContainer.layer.shadowOpacity = 0.7
         viewContainer.layer.shadowOffset = CGSize(width: 0, height: 3)
@@ -33,7 +32,8 @@ class ProfessionsCell: UITableViewCell {
             labelProfessions.text = "Profeciones"
             viewContainer.backgroundColor = hexColor(hex: "009B72")
         } else {
-            let count = gnome.friends.count >= 5 ? 5 : gnome.friends.count
+            var count = gnome.friends.count >= 5 ? 5 : gnome.friends.count
+            count = gnome.friends.count == 0 ? 1 : count
             imageStars.image = UIImage(named: "\(count)Stars")
             labelExperence.text = "Amigable"
             labelProfessions.text = "Amigos"
@@ -70,7 +70,7 @@ class ProfessionsCell: UITableViewCell {
 extension ProfessionsCell: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if isProfessions {
-             return gnome.professions.count
+            return gnome.professions.count 
         }
         return gnome.friends.count
     }
@@ -78,9 +78,9 @@ extension ProfessionsCell: UICollectionViewDataSource, UICollectionViewDelegate 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let item = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfessionsItem", for: indexPath) as! ProfessionsItem
         if isProfessions {
-            item.labelName.text = gnome.professions[indexPath.row].name
+            item.labelName.text = gnome.professions[indexPath.row]
         } else {
-            item.labelName.text = gnome.friends[indexPath.row].name
+            item.labelName.text = gnome.friends[indexPath.row]
         }
         return item
     }

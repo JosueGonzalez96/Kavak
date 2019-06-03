@@ -7,12 +7,15 @@
 //
 
 import UIKit
+import SDWebImage
 
 class ViewController: UIViewController {
 
     @IBOutlet weak var collectionView: UICollectionView!
     var isImage = false
     var arrGnome = [Gnome]()
+    var arrFilter = [Gnome]()
+    var index = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -24,39 +27,31 @@ class ViewController: UIViewController {
         search.delegate = self
         self.navigationItem.searchController = search
         self.title = "Brastlewark"
+        getGnomes()
+      
+        // Do any additional setup after loading the view, typically from a nib.
+    }
+    func getGnomes() {
         let service = ServiceCall()
         service.initWithURl { (success, obj) in
             if  success {
-                
+                guard let arr = obj as? [Gnome] else { return }
+                self.arrGnome = arr
+                self.arrFilter = self.arrGnome
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
+                }
             } else {
-                let gno = obj as! GnomeArr
                 
-                print(gno)
             }
         }
-//        for _ in 1...10 {
-//            var gno = Gnome()
-//            gno.name = "Tobus Quickwhistle"
-//            gno.weight = Int(35.279167)
-//            gno.height = Int(110.43628)
-//            gno.thumbnail = "http://www.publicdomainpictures.net/pictures/120000/nahled/white-hen.jpg"
-//            gno.hair_color = "Pink"
-//            gno.age = 288
-//            for _ in 1...20 {
-//                gno.friends.append(GnomeFriends(from: "Josue" as! Decoder))
-//                gno.professions.append(GnomeProfessions(from: "Josue"))
-//            }
-//            arrGnome.append(gno)
-//        }
-
-        // Do any additional setup after loading the view, typically from a nib.
     }
     // MARK: - Navigation
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? ProfileVC {
-            vc.gnome = arrGnome[0]
+            vc.gnome = arrFilter[index]
         }
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
@@ -64,27 +59,44 @@ class ViewController: UIViewController {
 }
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return arrGnome.count
+        return arrFilter.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let item = collectionView.dequeueReusableCell(withReuseIdentifier: "ItemGnome", for: indexPath) as! ItemGnome
-        item.image.image = UIImage(named: "Image-1")
-        item.name.text = arrGnome[indexPath.row].name
+        item.name.text = arrFilter[indexPath.row].name
+        guard let urlImage = arrFilter[indexPath.row].thumbnail else { return item }
+        item.image.sd_setImage(with: URL(string: urlImage), placeholderImage: UIImage(named: "Image-1"))
+
         
         return item
     }
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        index = indexPath.row
+        self.performSegue(withIdentifier: "ShowProfileSegue", sender: nil)
+    }
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         let size = CGSize(width: collectionView.frame.width / 2, height: collectionView.frame.height / 3)
         return size
     }
+    
 }
 extension ViewController: UISearchControllerDelegate, UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        print(searchController.searchBar.text!)
+        let text = searchController.searchBar.text
+        if text == "" {
+            arrFilter = arrGnome
+            collectionView.reloadData()
+            return
+        }
+        
+        arrFilter = arrFilter.filter({
+            ($0.name?.lowercased().contains(text!.lowercased()))!
+        })
+        arrFilter =  arrFilter.count == 0 ? arrGnome :  arrFilter
+        collectionView.reloadData()
     }
 }
 
@@ -94,14 +106,9 @@ class ItemGnome: UICollectionViewCell {
     @IBOutlet weak var name: UILabel!
     
 }
-class GnomeArr: NSObject, Decodable {
-    var gnomeArr: [Gnome]?
-    
-    enum CodingKeys : String, CodingKey {
-    case gnomeArr = "Brastlewark"
-    }
-}
-class Gnome: NSObject, Decodable {
+
+import ObjectMapper
+class Gnome: Mappable {
  
     var id: Int?
     var name: String?
@@ -110,25 +117,22 @@ class Gnome: NSObject, Decodable {
     var weight: Int?
     var height: Int?
     var hair_color: String?
-    var professions = [GnomeProfessions]()
-    var friends = [GnomeFriends]()
+    var professions = [String]()
+    var friends = [String]()
+    init(){}
     
-    enum CodingKeys : String, CodingKey {
-        case id = "id"
-        case name = "name"
-        case age = "age"
-        case thumbnail = "thumbnail"
-        case weight = "weight"
-        case height = "height"
-        case hair_color = "hair_color"
-        case professions = "home_page_url"
-        case friends = "items"
+    required init?(map: Map){
     }
-}
-
-class GnomeProfessions: NSObject, Decodable  {
-    var name = String()
-}
-class GnomeFriends: NSObject, Decodable  {
-    var name = String()
+    
+    func mapping(map: Map) {
+        id <- map["id"]
+        name <- map["name"]
+        age <- map["age"]
+        thumbnail <- map["thumbnail"]
+        weight <- map["weight"]
+        height <- map["height"]
+        hair_color <- map["hair_color"]
+        professions <- map["professions"]
+        friends <- map["friends"]
+    }
 }

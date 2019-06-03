@@ -82,7 +82,6 @@
                                         <connections>
                                             <outlet property="image" destination="w06-FM-Hyz" id="QUE-ap-iGg"/>
                                             <outlet property="name" destination="jcO-dB-Hqq" id="Qj8-jV-4Jr"/>
-                                            <segue destination="mBi-hs-29P" kind="show" id="ISn-aY-o3u"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -104,6 +103,7 @@
                     <navigationItem key="navigationItem" id="Xhf-5u-SaN"/>
                     <connections>
                         <outlet property="collectionView" destination="I2L-OH-t4z" id="HkT-qJ-kBF"/>
+                        <segue destination="mBi-hs-29P" kind="show" identifier="ShowProfileSegue" id="3Zk-IU-SIT"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -217,7 +217,7 @@
                                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UwI-Ko-O5f">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Información" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UwI-Ko-O5f">
                                                             <rect key="frame" x="100" y="8" width="165" height="21"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="21" id="KOG-KK-OKY"/>
@@ -409,7 +409,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rMk-hT-Bxr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1319.2" y="127.28635682158921"/>
+            <point key="canvasLocation" x="1892" y="130"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Lfb-UG-5DM">
