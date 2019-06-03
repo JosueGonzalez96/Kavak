@@ -62,7 +62,7 @@ extension ProfileVC: UITableViewDelegate, UITableViewDataSource {
         } else if indexPath.row == 2 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ProfessionsCell") as! ProfessionsCell
             cell.isProfessions = true
-           cell.gnome = gnome
+            cell.gnome = gnome
             cell.setUI()
             
             return cell

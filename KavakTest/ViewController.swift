@@ -24,21 +24,30 @@ class ViewController: UIViewController {
         search.delegate = self
         self.navigationItem.searchController = search
         self.title = "Brastlewark"
-        
-        for _ in 1...10 {
-            var gno = Gnome()
-            gno.name = "Tobus Quickwhistle"
-            gno.weight = Int(35.279167)
-            gno.height = Int(110.43628)
-            gno.thumbnail = "http://www.publicdomainpictures.net/pictures/120000/nahled/white-hen.jpg"
-            gno.hair_color = "Pink"
-            gno.age = 288
-            for _ in 1...20 {
-                gno.friends.append(GnomeFriends(name: "Josue"))
-                gno.professions.append(GnomeProfessions(name: "Josue"))
+        let service = ServiceCall()
+        service.initWithURl { (success, obj) in
+            if  success {
+                
+            } else {
+                let gno = obj as! GnomeArr
+                
+                print(gno)
             }
-            arrGnome.append(gno)
         }
+//        for _ in 1...10 {
+//            var gno = Gnome()
+//            gno.name = "Tobus Quickwhistle"
+//            gno.weight = Int(35.279167)
+//            gno.height = Int(110.43628)
+//            gno.thumbnail = "http://www.publicdomainpictures.net/pictures/120000/nahled/white-hen.jpg"
+//            gno.hair_color = "Pink"
+//            gno.age = 288
+//            for _ in 1...20 {
+//                gno.friends.append(GnomeFriends(from: "Josue" as! Decoder))
+//                gno.professions.append(GnomeProfessions(from: "Josue"))
+//            }
+//            arrGnome.append(gno)
+//        }
 
         // Do any additional setup after loading the view, typically from a nib.
     }
@@ -55,12 +64,12 @@ class ViewController: UIViewController {
 }
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-       return arrGnome.count
+        return arrGnome.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let item = collectionView.dequeueReusableCell(withReuseIdentifier: "ItemGnome", for: indexPath) as! ItemGnome
-            item.image.image = UIImage(named: "Image-1")
+        item.image.image = UIImage(named: "Image-1")
         item.name.text = arrGnome[indexPath.row].name
         
         return item
@@ -85,20 +94,41 @@ class ItemGnome: UICollectionViewCell {
     @IBOutlet weak var name: UILabel!
     
 }
-struct Gnome {
-    var id = Int()
-    var name = String()
-    var age = Int()
-    var thumbnail = String()
-    var weight = Int()
-    var height = Int()
-    var hair_color = String()
+class GnomeArr: NSObject, Decodable {
+    var gnomeArr: [Gnome]?
+    
+    enum CodingKeys : String, CodingKey {
+    case gnomeArr = "Brastlewark"
+    }
+}
+class Gnome: NSObject, Decodable {
+ 
+    var id: Int?
+    var name: String?
+    var age: Int?
+    var thumbnail: String?
+    var weight: Int?
+    var height: Int?
+    var hair_color: String?
     var professions = [GnomeProfessions]()
     var friends = [GnomeFriends]()
+    
+    enum CodingKeys : String, CodingKey {
+        case id = "id"
+        case name = "name"
+        case age = "age"
+        case thumbnail = "thumbnail"
+        case weight = "weight"
+        case height = "height"
+        case hair_color = "hair_color"
+        case professions = "home_page_url"
+        case friends = "items"
+    }
 }
-struct GnomeProfessions {
+
+class GnomeProfessions: NSObject, Decodable  {
     var name = String()
 }
-struct GnomeFriends {
+class GnomeFriends: NSObject, Decodable  {
     var name = String()
 }
